@@ -4,8 +4,15 @@ $version = "23.03.01"
 ###########################################
 Import-Module .\CPC-Modules.psm1
 
+Get-Content 
 # Prompt user for ISPSS URL
-$CPCSubdomain = Read-Host -Prompt 'Input your CyberArk Privilege Cloud Subdomain'
+$decisionSubDomain = Get-Choice -Title "What is your subdomain" -Options "$SavedSubdomain", "No Something Else" -DefaultChoice 1
+            if ($decisionSubDomain -eq "No Something Else")
+            {
+                $CPCSubdomain = Read-Host -Prompt 'Input your CyberArk Privilege Cloud Subdomain'
+                Write-Host "Save $CPCSubdomain to File"
+            }
+
 
 function Show-Menu {
     param (
