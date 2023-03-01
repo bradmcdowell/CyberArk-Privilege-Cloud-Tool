@@ -4,13 +4,18 @@ $version = "23.03.01"
 ###########################################
 Import-Module .\CPC-Modules.psm1
 
-Get-Content 
+New-Item -ItemType Directory -Force -Path .\var
+New-Item -ItemType Directory -Force -Path .\logs
+$CPCSubdomain = Get-Content -Path .\var\subdomain.txt
+
 # Prompt user for ISPSS URL
-$decisionSubDomain = Get-Choice -Title "What is your subdomain" -Options "$SavedSubdomain", "No Something Else" -DefaultChoice 1
+$decisionSubDomain = Get-Choice -Title "What is your subdomain" -Options "$CPCSubdomain", "No Something Else" -DefaultChoice 1
             if ($decisionSubDomain -eq "No Something Else")
             {
                 $CPCSubdomain = Read-Host -Prompt 'Input your CyberArk Privilege Cloud Subdomain'
-                Write-Host "Save $CPCSubdomain to File"
+                Write-Host "Save $CPCSubdomain to .\var\subdomain.txt"
+                
+                $CPCSubdomain | Add-Content -Path .\var\subdomain.txt
             }
 
 
@@ -20,6 +25,7 @@ function Show-Menu {
     )
     Clear-Host
     Write-Host "================ $Title $version ================"
+    Write-Host "================ $CPCSubdomain Subdomain ========="
     #Add comment here
     Write-Host "1: Press '1' Authenticate to ISPSS"
     Write-Host "2: Press '2' Create Personal Safe"
