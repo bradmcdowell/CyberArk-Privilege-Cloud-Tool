@@ -5,7 +5,7 @@ $version = "23.03.01"
 Import-Module .\CPC-Modules.psm1
 
 # Prompt user for ISPSS URL
-$ISPSSURL = Read-Host -Prompt 'Input your ISPSSURL eg https://subdomain.cyberark.cloud'
+$CPCSubdomain = Read-Host -Prompt 'Input your CyberArk Privilege Cloud Subdomain'
 
 function Show-Menu {
     param (
@@ -72,5 +72,9 @@ do
     pause
  }
  until ($selection -eq 'q')
+
+# Reset Values
+$CPCSubdomain = $null
+
 
 
