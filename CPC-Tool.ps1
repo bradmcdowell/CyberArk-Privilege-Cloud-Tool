@@ -1,9 +1,11 @@
 # CyberArk Privilege Cloud Tool
 $version = "23.03.01"
-# Prompt user for ISPSS URL
-$ISPSSURL = Read-Host -Prompt 'Input your ISPSSURL eg https://subdomain.cyberark.cloud'
 
 ###########################################
+Import-Module .\CPC-Modules.psm1
+
+# Prompt user for ISPSS URL
+$ISPSSURL = Read-Host -Prompt 'Input your ISPSSURL eg https://subdomain.cyberark.cloud'
 
 function Show-Menu {
     param (
