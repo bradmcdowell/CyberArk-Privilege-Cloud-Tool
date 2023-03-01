@@ -8,6 +8,30 @@ New-Item -ItemType Directory -Force -Path .\var
 New-Item -ItemType Directory -Force -Path .\logs
 $CPCSubdomain = Get-Content -Path .\var\subdomain.txt
 
+
+Write-Host "============= Pick the Subdomain =============="
+Write-Host "1: Press '1' To use the subdomain $CPCSubdomain"
+Write-Host "2: Press '2' Select a different Subdoamin"
+Write-Host "Q: Press 'Q' to Quit."
+Write-Host "========================================================"
+$SubDomainChoice = Read-Host "Enter Choice"
+
+switch ($SubDomainChoice) {
+    '1'{
+          Write-Host "`You have slected 1 $CPCSubdomain"
+    }
+    '2'{
+          Write-Host "`You want a differnt subdomain"
+          $CPCSubdomain = Read-Host -Prompt 'Input your CyberArk Privilege Cloud Subdomain'
+          Write-Host "Save $CPCSubdomain to .\var\subdomain.txt for next time"
+          Clear-Content -Path .\var\subdomain.txt
+          $CPCSubdomain | Add-Content -Path .\var\subdomain.txt
+    }
+    'Q'{Return}
+ }
+
+ $global:CPCSubdomain = $CPCSubdomain
+
 # Prompt user for ISPSS URL
 $decisionSubDomain = Get-Choice -Title "What is your subdomain" -Options "$CPCSubdomain", "No Something Else" -DefaultChoice 1
             if ($decisionSubDomain -eq "No Something Else")
@@ -24,8 +48,8 @@ function Show-Menu {
         [string]$Title = 'CyberArk Privilege Cloud Tool - Version'
     )
     Clear-Host
-    Write-Host "================ $Title $version ================"
-    Write-Host "================ $CPCSubdomain Subdomain ========="
+    Write-Host "================ $Title $version ============================="
+    Write-Host "================ https://$CPCSubdomain.cyberark.cloud ========="
     #Add comment here
     Write-Host "1: Press '1' Authenticate to ISPSS"
     Write-Host "2: Press '2' Create Personal Safe"
@@ -88,6 +112,7 @@ do
 
 # Reset Values
 $CPCSubdomain = $null
+$global:headers.Values = $null
 
 
 
