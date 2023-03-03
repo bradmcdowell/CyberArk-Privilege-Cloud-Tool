@@ -1,5 +1,5 @@
 # CyberArk Privilege Cloud Tool
-$version = "23.03.02"
+$version = "23.03.03"
 
 ###########################################
 Import-Module .\CPC-Modules.psm1
