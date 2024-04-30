@@ -1,5 +1,5 @@
 # CyberArk Privilege Cloud Tool
-$version = "23.03.03"
+$version = "24.04.30"
 
 ###########################################
 Import-Module .\CPC-Modules.psm1
@@ -8,10 +8,10 @@ Import-Module .\IdentityAuth.psm1
 New-Item -ItemType Directory -Force -Path .\var
 New-Item -ItemType Directory -Force -Path .\logs
 $CPCSubdomain = Get-Content -Path .\var\subdomain.txt
-
+$IdentityTenantId = Get-Content -Path .\var\identityid.txt
 
 Write-Host "============= Pick the Subdomain =============="
-Write-Host "1: Press '1' To use the subdomain $CPCSubdomain"
+Write-Host "1: Press '1' To use the subdomain $CPCSubdomain and Identity Tenant ID $IdentityTenantId"
 Write-Host "2: Press '2' Select a different Subdoamin"
 Write-Host "Q: Press 'Q' to Quit."
 Write-Host "========================================================"
@@ -22,16 +22,22 @@ switch ($SubDomainChoice) {
           Write-Host "`You have slected 1 $CPCSubdomain"
     }
     '2'{
-          Write-Host "`You want a differnt subdomain"
+          Write-Host "`You want a differnt subdomain and Identity Tenant ID"
           $CPCSubdomain = Read-Host -Prompt 'Input your CyberArk Privilege Cloud Subdomain'
           Write-Host "Save $CPCSubdomain to .\var\subdomain.txt for next time"
           Clear-Content -Path .\var\subdomain.txt
           $CPCSubdomain | Add-Content -Path .\var\subdomain.txt
+
+          $IdentityTenantId = Read-Host -Prompt 'Input your CyberArk Identity Tenant ID'
+          Write-Host "Save $IdentityTenantId to .\var\identityid.txt for next time"
+          Clear-Content -Path .\var\identityid.txt
+          $IdentityTenantId  | Add-Content -Path .\var\identityid.txt
     }
     'Q'{Return}
  }
 
  $global:CPCSubdomain = $CPCSubdomain
+ $global:IdentityTenantId = $IdentityTenantId
  $global:PVWAURL = "https://$CPCSubdomain.privilegecloud.cyberark.cloud/PasswordVault"
 
 # Prompt user for ISPSS URL
@@ -50,8 +56,8 @@ function Show-Menu {
         [string]$Title = 'CyberArk Privilege Cloud Tool - Version'
     )
     Clear-Host
-    Write-Host "================ $Title $version ============================="
-    Write-Host "================ https://$CPCSubdomain.cyberark.cloud ========="
+    Write-Host "================ $Title $version ================================================"
+    Write-Host "================ https://$CPCSubdomain.cyberark.cloud ===== Identity Tenant $IdentityTenantId ===="
     #Add comment here
     Write-Host "1: Press '1' Authenticate to ISPSS Non Interactive"
     Write-Host "2: Press '2' Authenticate to ISPSS Interactive Mode"
@@ -60,6 +66,7 @@ function Show-Menu {
     Write-Host "5: Press '5' Show System Health"
     Write-Host "6: Press '6' List PSM Servers"
     Write-Host "7: Press '7' List CPM Servers"
+    Write-Host "8: Press '8' Identity Roles"
     Write-Host "Q: Press 'Q' to quit."
 }
 
@@ -80,7 +87,6 @@ do
     # Start Option 2
     $global:BearerToken = $null        
     Write-Host 'You chose option #2 - Authenticate to ISPSS Interactive Mode'
-    $IdentityTenantId = Read-Host -Prompt 'Input your CyberArk Identity ID'
     $CPCUsername = Read-Host -Prompt 'Input your CyberArk Privilege Cloud Username'
     $header = Get-IdentityHeader -IdentityTenantURL "$IdentityTenantId.id.cyberark.cloud" -IdentityUserName $CPCUsername
     $global:BearerToken = $header.Authorization
@@ -127,12 +133,18 @@ do
     } '6' {
     # Start Option 6       
     Write-Host 'You chose option #6 - List PSM Servers'
-    # End Option 3
+    # End Option 6
     ###########################################   
     } '7' {
-    # Start Option 3        
+    # Start Option 7       
     Write-Host 'You chose option #7 - List CPM Servers'
-    # End Option 3
+    # End Option 7
+    ###########################################
+    } '8' {
+    # Start Option 8     
+    Write-Host 'You chose option #8 - Identity Roles'
+    .\Roles\RoleManagement.ps1
+    # End Option 8
     ###########################################
     }
     }
